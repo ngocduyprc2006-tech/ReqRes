@@ -1,0 +1,66 @@
+name: Shift-Right API Performance Monitor
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Chạy tự động mỗi giờ
+  workflow_dispatch:    # Cho phép bấm chạy thủ công trên GitHub[cite: 33]
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Generate Monitor Collection & Execute Check
+        run: |
+          cat << 'EOF' > monitor_collection.json
+          {
+            "info": {
+              "name": "ReqRes Shift-Right Monitor",
+              "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+            },
+            "item": [
+              {
+                "name": "GET Users Page 1 - Availability & SLA Check",
+                "event": [
+                  {
+                    "listen": "test",
+                    "script": {
+                      "type": "text/javascript",
+                      "exec": [
+                        "pm.test('Availability: Status code is 200', function () {",
+                        "    pm.response.to.have.status(200);",
+                        "});",
+                        "pm.test('SLA Performance: Response time is below 800ms', function () {",
+                        "    pm.expect(pm.response.responseTime).to.be.below(800);",
+                        "});"
+                      ]
+                    }
+                  }
+                ],
+                "request": {
+                  "method": "GET",
+                  "header": [],
+                  "url": {
+                    "raw": "https://reqres.in/api/users?page=1",
+                    "protocol": "https",
+                    "host": ["reqres", "in"],
+                    "path": ["api", "users"],
+                    "query": [{"key": "page", "value": "1"}]
+                  }
+                }
+              }
+            ]
+          }
+          EOF
+          newman run monitor_collection.json --reporters cli
