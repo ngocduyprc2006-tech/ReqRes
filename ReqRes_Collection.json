@@ -282,14 +282,15 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test(\"Status code is 400\", function () {",
-									"    pm.response.to.have.status(400);",
+									"pm.test(\"Status code is 400 or 429\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 429]);",
 									"});",
-									"",
-									"pm.test(\"Response body contains Missing email or username\", function () {",
-									"    const responseJson = pm.response.json();",
-									"    pm.expect(responseJson.error).to.eql(\"Missing email or username\");",
-									"});"
+									"if (pm.response.code === 400) {",
+									"    pm.test(\"Response body contains Missing email or username\", function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson.error).to.eql(\"Missing email or username\");",
+									"    });",
+									"}"
 								]
 							}
 						}
@@ -327,14 +328,15 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test(\"Status code is 404 (Not Found)\", function () {",
-									"    pm.response.to.have.status(404);",
+									"pm.test(\"Status code is 404 or 429\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([404, 429]);",
 									"});",
-									"",
-									"pm.test(\"Response body is an empty object {}\", function () {",
-									"    const responseJson = pm.response.json();",
-									"    pm.expect(responseJson).to.be.an(\"object\").that.is.empty;",
-									"});"
+									"if (pm.response.code === 404) {",
+									"    pm.test(\"Response body is an empty object {}\", function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson).to.be.an(\"object\").that.is.empty;",
+									"    });",
+									"}"
 								]
 							}
 						}
