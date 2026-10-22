@@ -1,4 +1,4 @@
-name: Automated API tests using Postman CLI
+name: API Testing CI/CD Pipeline
 
 on:
   push:
@@ -6,20 +6,33 @@ on:
   workflow_dispatch:
 
 jobs:
-  automated-api-tests:
+  api-test:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Install Postman CLI
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Newman and HTML Extra Reporter
+        run: npm install -g newman newman-reporter-htmlextra
+
+      - name: Run Newman Tests
         run: |
-          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+          postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+          postman collection pull "58311223-d1bde2dd-9c16-44d3-90af-a12e577ab8e6" -o ReqRes_Collection.json
+          newman run ReqRes_Collection.json \
+            -d users.csv \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export report.html
 
-      - name: Login to Postman CLI
-        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
-
-      - name: Run API tests with Data File
-        run: |
-          postman collection run "58311223-d1bde2dd-9c16-44d3-90af-a12e577ab8e6" \
-            -e "58311223-59ed5734-e038-4e6a-9a84-8ccc2e81f038" \
-            -d users.csv
+      - name: Upload Test Report Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-html-report
+          path: report.html
