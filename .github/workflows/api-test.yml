@@ -23,9 +23,8 @@ jobs:
 
       - name: Run Newman Tests
         run: |
-          postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
-          postman collection pull "58311223-d1bde2dd-9c16-44d3-90af-a12e577ab8e6" -o ReqRes_Collection.json
           newman run ReqRes_Collection.json \
+            -e ReqRes_Environment.json \
             -d users.csv \
             --reporters cli,htmlextra \
             --reporter-htmlextra-export report.html
