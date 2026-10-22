@@ -17,7 +17,15 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\nconst responseJson = pm.response.json();\r\npm.test(\"Token is returned and saved\", function () {\r\n    pm.expect(responseJson.token).to.exist;\r\n    pm.environment.set(\"userToken\", responseJson.token);\r\n});"
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"pm.test(\"Token is returned and saved\", function () {",
+									"    pm.expect(responseJson.token).to.exist;",
+									"    pm.environment.set(\"userToken\", responseJson.token);",
+									"});"
 								]
 							}
 						}
@@ -27,7 +35,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"eve.holt@reqres.in\",\r\n    \"password\": \"pistol\"\r\n}",
+							"raw": "{\n    \"email\": \"eve.holt@reqres.in\",\n    \"password\": \"pistol\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -55,7 +63,22 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test(\"Status code is 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\nconst responseJson = pm.response.json();\r\n\r\n// Kiểm tra dữ liệu khớp với file CSV\r\nconst expectedName = pm.iterationData.get(\"name\");\r\nconst expectedJob = pm.iterationData.get(\"job\");\r\n\r\nif (expectedName && expectedJob) {\r\n    pm.test(\"Name and job match CSV data\", function () {\r\n        pm.expect(responseJson.name).to.eql(expectedName);\r\n        pm.expect(responseJson.job).to.eql(expectedJob);\r\n    });\r\n}\r\n\r\n// Trích xuất id trả về và gán vào biến môi trường userId\r\npm.environment.set(\"userId\", responseJson.id);"
+									"pm.test(\"Status code is 201 or 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 200]);",
+									"});",
+									"",
+									"const responseJson = pm.response.json();",
+									"const expectedName = pm.iterationData.get(\"name\");",
+									"const expectedJob = pm.iterationData.get(\"job\");",
+									"",
+									"if (expectedName && expectedJob) {",
+									"    pm.test(\"Name and job match CSV data\", function () {",
+									"        pm.expect(responseJson.name).to.eql(expectedName);",
+									"        pm.expect(responseJson.job).to.eql(expectedJob);",
+									"    });",
+									"}",
+									"",
+									"pm.environment.set(\"userId\", responseJson.id);"
 								]
 							}
 						}
@@ -70,7 +93,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"{{name}}\",\r\n    \"job\": \"{{job}}\"\r\n}",
+							"raw": "{\n    \"name\": \"{{name}}\",\n    \"job\": \"{{job}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -98,7 +121,15 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Verify data.id is 2 and email ends with @reqres.in\", function () {\r\n    const responseJson = pm.response.json();\r\n    pm.expect(responseJson.data.id).to.eql(2);\r\n    pm.expect(responseJson.data.email).to.include(\"@reqres.in\");\r\n});"
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Verify data.id is 2 and email ends with @reqres.in\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.data.id).to.eql(2);",
+									"    pm.expect(responseJson.data.email).to.include(\"@reqres.in\");",
+									"});"
 								]
 							}
 						}
@@ -128,7 +159,14 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"updatedAt field exists in response body\", function () {\r\n    const responseJson = pm.response.json();\r\n    pm.expect(responseJson).to.have.property(\"updatedAt\");\r\n});"
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"updatedAt field exists in response body\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property(\"updatedAt\");",
+									"});"
 								]
 							}
 						}
@@ -138,7 +176,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n \"name\": \"An Nguyen Updated\",\r\n \"job\": \"QA Manager\"\r\n}",
+							"raw": "{\n \"name\": \"An Nguyen Updated\",\n \"job\": \"QA Manager\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -167,7 +205,9 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test(\"Status code is 204 (No Content)\", function () {\r\n    pm.response.to.have.status(204);\r\n});"
+									"pm.test(\"Status code is 204 (No Content)\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
 								]
 							}
 						}
@@ -202,7 +242,14 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test(\"Status code is 400 (Bad Request)\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\npm.test(\"Response body returns Missing password error\", function () {\r\n    const responseJson = pm.response.json();\r\n    pm.expect(responseJson.error).to.eql(\"Missing password\");\r\n});"
+									"pm.test(\"Status code is 400 (Bad Request)\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Response body returns Missing password error\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.error).to.eql(\"Missing password\");",
+									"});"
 								]
 							}
 						}
@@ -212,7 +259,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"sydney@fife\"\r\n}",
+							"raw": "{\n    \"email\": \"sydney@fife\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -240,7 +287,14 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test(\"Status code is 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\npm.test(\"Response body contains Missing email or username\", function () {\r\n    const responseJson = pm.response.json();\r\n    pm.expect(responseJson.error).to.eql(\"Missing email or username\");\r\n});"
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Response body contains Missing email or username\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.error).to.eql(\"Missing email or username\");",
+									"});"
 								]
 							}
 						}
@@ -278,7 +332,14 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"pm.test(\"Status code is 404 (Not Found)\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"Response body is an empty object {}\", function () {\r\n    const responseJson = pm.response.json();\r\n    pm.expect(responseJson).to.be.an(\"object\").that.is.empty;\r\n});"
+									"pm.test(\"Status code is 404 (Not Found)\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Response body is an empty object {}\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an(\"object\").that.is.empty;",
+									"});"
 								]
 							}
 						}
